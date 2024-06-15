@@ -1,0 +1,56 @@
+# name: Deploy to AWS
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#     - name: Checkout repository
+#       uses: actions/checkout@v2
+
+#     - name: Configure AWS credentials
+#       uses: aws-actions/configure-aws-credentials@v2
+#       with:
+#         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#         aws-region: ap-northeast-1
+
+#     - name: Login to ECR
+#       id: login-ecr
+#       uses: aws-actions/amazon-ecr-login@v1
+
+#     - name: Build and push Docker image
+#       env:
+#         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+#         ECR_REPOSITORY: my-app
+#         IMAGE_TAG: ${{ github.sha }}
+#       run: |
+#         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+#         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+#     - name: Deploy to ECS
+#       env:
+#         CLUSTER_NAME: my-cluster
+#         SERVICE_NAME: my-service
+#         CONTAINER_NAME: my-container
+#         IMAGE_URI: ${{ steps.login-ecr.outputs.registry }}/my-app:${{ github.sha }}
+#       run: |
+#         ecs-cli compose --file docker-compose.yml service up --cluster-config $CLUSTER_NAME --ecs-profile ecs-profile
+#         ecs-cli compose --file docker-compose.yml service up --cluster-config $CLUSTER_NAME --ecs-profile ecs-profile
+#         aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --force-new-deployment
+
+#     - name: Notify deployment
+#       uses: peter-evans/slack-notify@v2
+#       with:
+#         status: ${{ job.status }}
+#         fields: repo,commit,author
+#         author_name: GitHub Actions
+#         icon_emoji: ':rocket:'
+#         channel: 'deployments'
+#         text: 'Deployment to ECS completed'
+#         slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
