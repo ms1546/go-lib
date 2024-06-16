@@ -13,6 +13,17 @@
 #     - name: Checkout repository
 #       uses: actions/checkout@v2
 
+#     - name: Set up Go
+#       uses: actions/setup-go@v2
+#       with:
+#         go-version: '1.21.6'
+
+#     - name: Install dependencies
+#       run: go mod download
+
+#     - name: Run tests
+#       run: go test -v ./...
+
 #     - name: Configure AWS credentials
 #       uses: aws-actions/configure-aws-credentials@v2
 #       with:
@@ -54,3 +65,4 @@
 #         channel: 'deployments'
 #         text: 'Deployment to ECS completed'
 #         slack_webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+#
